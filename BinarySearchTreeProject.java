@@ -17,16 +17,28 @@ public class BinarySearchTreeProject {
     public static void main(String[] args) {
         BST<Integer> tree = new BST();
         
+       
+       try{ 
        tree.insertNode(100);
        tree.insertNode(50);
        tree.insertNode(80);
        tree.insertNode(120);
        tree.insertNode(110);
        tree.insertNode(180);
+       tree.insertNode(160);
+       tree.insertNode(190);
+       tree.insertNode(170);
+        System.out.println(tree);
+         System.out.println(tree.size());
        System.out.println(tree);
-       tree.remove(100); 
+       tree.remove(550);
+       }
+       catch(Exception prob)
+       {
+           System.err.println(prob.getMessage()); 
+       }
        
-       System.out.println(tree.toString()); 
+       
        System.out.println(tree.size()); 
     }
     

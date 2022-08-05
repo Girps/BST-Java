@@ -5,10 +5,6 @@
  */
 package binarysearchtreeproject;
 
-/**
- *
- * @author Jesse
- */
 
 // BST class only takes in refences that implement Comparable interface 
 public class BST <E extends Comparable> 
@@ -36,119 +32,6 @@ public class BST <E extends Comparable>
         {
             return "(" + data.toString() + ")"; 
         }
-        
-        /*Recursive void method traverses the BST and adds until null is 
-            found and inserts our node into the tree */ 
-        public void add(E target)
-        {
-            // case if same data skip return to calling method 
-            if (data.compareTo(target) != 0)
-            {
-                // 3 cases
-                // if data less than current node traverese left 
-                if(this.data.compareTo(target) > 0)
-                {
-                // go left if not null
-                    if(this.left != null)
-                    {
-                        left.add(target); // trav left
-                    }
-                    else
-                    {
-                        // otherwise its empty 
-                        left = new Node(target);
-                    }
-                } // go right 
-                else
-                {
-                    // If right is not empty
-                    if(this.right != null)
-                    {
-                        right.add(target); // trav to right
-                    }
-                    else
-                    {
-                        // other wise intialize right=
-                        right = new Node(target); 
-                    }
-                }
-            }
-        }
-        
-        /*Romoves a node in the list */ 
-        public void removeNode(E target)
-        {
-            root = removeNodeHelper(root,target); 
-        }
-       
-        // Returning node to mutatad BST 
-        private Node removeNodeHelper(Node root, E target)
-        {
-            
-            // Case we found the node 
-            if(root.data.compareTo(target) == 0 )
-            {
-                // have no children 
-                if(root.left == null && root.right == null)
-                {
-                   // No children case set result to null 
-                     return null; 
-                } // 1 child case on right
-                else if(root.left != null && root.right == null)
-                {
-                    return root = root.left; 
-                }
-                else if(root.right != null && root.left == null)// child on the right
-                {
-                   return root = root.right;  
-                }
-                else // two children case 
-                {
-                        // find inorder sucessor swap data 
-                    Node temp = inOrderSuccessor(root.right);
-                    // swap data 
-                    root.data = temp.data; 
-                    // Now delete it 
-                    root.right = removeNodeHelper(root.right,temp.data);
-                    return root; 
-                }
-            }
-            
-            // Didnt find equal trave cases
-            // if root data is bigger go left 
-            if(root.data.compareTo(target) > 0)
-            {
-                if(root.left != null)
-                {
-                    root.left = removeNodeHelper(root.left,target); 
-                }
-            } // if root data is less go right
-            else if(root.data.compareTo(target) < 0)
-            {
-                if(root.right != null)
-                {
-                    root.right = removeNodeHelper(root.right,target); 
-                }
-            }
-            
-            return root; 
-        }
-        
-        
-        //Node reference returning method returns node to be removed 
-        private Node inOrderSuccessor(Node root)
-        {
-            // Find minimum of given root 
-            // Just traverse Left  
-            if(root.left != null)
-            {
-                return inOrderSuccessor(root.left); 
-            }
-            else
-            {
-                return root; // return root no more left found 
-            }
-        }
        
     }
     //*********************************************************//
@@ -164,21 +47,105 @@ public class BST <E extends Comparable>
     
     public void remove(E data)
     {
-        root.removeNode(data);
+        root = removeNodeHelper(root,data);
+    }
+    
+    public Node removeNodeHelper(Node root,E data)
+    {
+         // Base case if noode is null throw an excpetion 
+         if(root == null){throw new BSTException("Element not found"); }
+         
+         // Base case found the element in cuurent root
+         if(root.data.compareTo(data) == 0)
+         {
+             // check what type of node 
+             // if leaf 
+             if(root.left == null && root.right == null)
+             {
+                 // leaf case and equal just return null 
+                 return null;
+             }
+             if(root.right == null && root.left != null)
+             {  // child on the left case
+                return root.left; // assign previous refence to left child
+             }
+             else if(root.right != null && root.left ==null)
+             { // child on the right case
+                 return root.right; // assign previous refence to rigth child 
+             }
+             else
+             { // two children case, replace with inOrder successor 
+                 Node temp = inOrderSuccessor(root.right); 
+                 // Have succesor refence  swap data 
+                root.data = temp.data; 
+                // Now delete the inOrderSccessor node and initlize refernce to right 
+                root.right = removeNodeHelper(root.right, root.data);
+               return root; 
+             }
+         } // case when not found traverse  
+         else
+         {
+             // case to traverse  
+             // case root is bigger go left
+             if(root.data.compareTo(data) > 0)
+             {
+                 // traverse to the left
+                 root.left = removeNodeHelper(root.left,data);
+                 return root; 
+             } // case root is less than data go right 
+             else if(root.data.compareTo(data) < 0)
+             {
+                 // trave right and reassign the refence returned
+                 root.right = removeNodeHelper(root.right,data); 
+                 return root; 
+             }
+             return root; 
+         }
     }
     
     // Void method inserts node in the BST
     public void insertNode(E data)
     {
-        if(root == null)
+        
+        root = insertHelper(root, data );    
+        
+    }
+    
+    private Node insertHelper(Node root, E data)
+    {
+        // Base case if root is null return new node 
+        if(root == null){return new Node(data); }
+        
+        // Make sure the data is not same then traverse 
+        if(root.data.compareTo(data ) != 0 )
         {
-        // root is null create new node pointed by root
-        root = new Node(data); 
+            // Otherwise root is not empty now compare and traverse Data
+            if(root.data.compareTo(data) > 0)
+            {
+            // current root data is bigger  traverse to left 
+            root.left = insertHelper(root.left,data); 
+            }
+            else // Otherwise root data is smaller traverse to right
+            {
+            root.right = insertHelper(root.right,data); 
+            }
         }
-        else
+        // if the same just return current root no need to create a new root
+        return root; 
+    } 
+    
+    
+    /*Node returning method returns method to inOrder successor */
+    private Node inOrderSuccessor(Node root)
+    {
+        // Base case if left side is null return root 
+        if(root.left == null)
         {
-            // Use instance method of root and add it to our tree
-            root.add(data); 
+            return root; 
+        }
+        else // Otherwise recursive call
+        {
+            return inOrderSuccessor( root.left); 
         }
     }
     
